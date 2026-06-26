@@ -395,9 +395,13 @@ export class YtdlpService implements OnModuleInit {
 
     childProcess.stderr.on('data', (data) => {
       const dataStr = Buffer.from(data).toString();
-      hasError = true;
-      errorMessage = dataStr.trim();
-      subject.error(new Error(errorMessage));
+      // yt-dlp writes warnings (e.g. missing JS runtime, nsig) to stderr.
+      // Only treat genuine "ERROR:" lines as fatal; warnings must not abort.
+      if (/(^|\n)\s*ERROR:/i.test(dataStr)) {
+        hasError = true;
+        errorMessage = dataStr.trim();
+        subject.error(new Error(errorMessage));
+      }
     });
 
     childProcess.stdout.on('error', (err) => {
