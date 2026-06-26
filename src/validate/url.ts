@@ -80,6 +80,7 @@ export const isFacebookUrl = (url: string) => {
       '/story',
       '/groups',
       '/share/v',
+      '/share/r',
     ];
     const path = urlObj.pathname.toLowerCase();
 
